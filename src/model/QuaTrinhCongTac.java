@@ -5,13 +5,17 @@
  */
 package model;
 
+import java.sql.Date;
+
 /**
  *
  * @author HIEU
  */
-public class PhongBan {
+public class QuaTrinhCongTac {
     private int id;
-    private String ten;
-    private DonVi donVi;
-    private String sdt;
+    private HoSo hoso;
+    private ChucVu chucVu;
+    private String nhiemVu;
+    private Date ngayBatDau;
+    private Date ngayKetThuc;
 }

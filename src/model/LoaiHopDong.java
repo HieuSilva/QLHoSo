@@ -9,9 +9,7 @@ package model;
  *
  * @author HIEU
  */
-public class PhongBan {
+public class LoaiHopDong {
     private int id;
     private String ten;
-    private DonVi donVi;
-    private String sdt;
 }
