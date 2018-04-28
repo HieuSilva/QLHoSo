@@ -14,4 +14,6 @@ public class DonVi {
     private String ten;
     private String diaChi;
     private String sdt;
+    private String username;
+    private String password;
 }
