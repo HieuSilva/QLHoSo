@@ -28,4 +28,44 @@ public class HopDong {
     private Date tgGiuBac;
     private String ghiChu;
     private String congViec;
+
+    public HopDong(HoSo hoso, float heSoLuong, float mucLuong, float phuCap) {
+        this.hoso = hoso;
+        this.heSoLuong = heSoLuong;
+        this.mucLuong = mucLuong;
+        this.phuCap = phuCap;
+    }
+
+    public HoSo getHoso() {
+        return hoso;
+    }
+
+    public void setHoso(HoSo hoso) {
+        this.hoso = hoso;
+    }
+
+    public float getHeSoLuong() {
+        return heSoLuong;
+    }
+
+    public void setHeSoLuong(float heSoLuong) {
+        this.heSoLuong = heSoLuong;
+    }
+
+    public float getMucLuong() {
+        return mucLuong;
+    }
+
+    public void setMucLuong(float mucLuong) {
+        this.mucLuong = mucLuong;
+    }
+
+    public float getPhuCap() {
+        return phuCap;
+    }
+
+    public void setPhuCap(float phuCap) {
+        this.phuCap = phuCap;
+    }
+    
 }

@@ -14,4 +14,43 @@ public class PhongBan {
     private String ten;
     private DonVi donVi;
     private String sdt;
+
+    public PhongBan(int id, String ten, DonVi donVi) {
+        this.id = id;
+        this.ten = ten;
+        this.donVi = donVi;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTen() {
+        return ten;
+    }
+
+    public void setTen(String ten) {
+        this.ten = ten;
+    }
+
+    public DonVi getDonVi() {
+        return donVi;
+    }
+
+    public void setDonVi(DonVi donVi) {
+        this.donVi = donVi;
+    }
+
+    public String getSdt() {
+        return sdt;
+    }
+
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
+    }
+    
 }
