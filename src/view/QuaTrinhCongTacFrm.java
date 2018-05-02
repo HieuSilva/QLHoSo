@@ -6,8 +6,6 @@
 package view;
 
 import control.Controller;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.text.ParseException;
@@ -15,7 +13,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import model.ChucVu;
 import model.HoSo;
@@ -45,6 +45,11 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
         setListChucVu(listChucVu);
         setHoSoNhanVienFrm(hoSoNhanVienFrm);
         listQTCongTac = controller.getListQTCongTac(hoSo, listChucVu);
+
+        if (listQTCongTac == null) {
+            JOptionPane.showMessageDialog(null, "Không có quá trình công tác");
+            hoSoNhanVienFrm.getBtnDeXuatThem().setEnabled(true);
+        }
 
         displayTable();
         setCbbListChucVu();
@@ -113,21 +118,53 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
         this.listChucVu = listChucVu;
     }
 
+    public ArrayList<QuaTrinhCongTac> getListQTCongTac() {
+        return listQTCongTac;
+    }
+
+    public void setListQTCongTac(ArrayList<QuaTrinhCongTac> listQTCongTac) {
+        this.listQTCongTac = listQTCongTac;
+    }
+
     private void displayTable() {
         DefaultTableModel dm = (DefaultTableModel) tblQTCT.getModel();
         dm.setRowCount(0);
 
-        for (QuaTrinhCongTac qtct : listQTCongTac) {
-            Object[] obj = new Object[]{qtct.getChucVu().getTen(), qtct.getNhiemVu(), qtct.getNgayBatDau(), qtct.getNgayKetThuc()};
-            dm.addRow(obj);
+        if (listQTCongTac != null) {
+            for (QuaTrinhCongTac qtct : listQTCongTac) {
+                Object[] obj = new Object[]{qtct.getChucVu().getTen(), qtct.getNhiemVu(), qtct.getNgayBatDau(), qtct.getNgayKetThuc()};
+                dm.addRow(obj);
+            }
         }
     }
 
     private void setContent(QuaTrinhCongTac qtct) {
         txtMaQTCT.setText(qtct.getId() + "");
         txtNhiemVu.setText(qtct.getNhiemVu());
-        txtTuNgay.setText(qtct.getNgayBatDau().toString());
-        txtDenNgay.setText(qtct.getNgayKetThuc().toString());
+
+        cbbChucVu.setSelectedItem(qtct.getChucVu().getTen());
+
+        if (txtTuNgay.getText().trim().equals("")) {
+            txtTuNgay.setText("");
+        }
+        else {
+            txtTuNgay.setText(qtct.getNgayBatDau().toString());
+        }
+
+        if (txtDenNgay.getText().trim().equals("")) {
+            txtDenNgay.setText("");
+        }
+        else {
+            txtDenNgay.setText(qtct.getNgayKetThuc().toString());
+        }
+    }
+
+    private void clearContent() {
+        txtMaQTCT.setText("");
+        txtNhiemVu.setText("");
+        cbbChucVu.setSelectedIndex(0);
+        txtTuNgay.setText("");
+        txtDenNgay.setText("");
     }
 
     private void setCbbListChucVu() {
@@ -308,21 +345,51 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
         // TODO add your handling code here:
-        QuaTrinhCongTac qtct = new QuaTrinhCongTac();
-        qtct.setChucVu(listChucVu.get(cbbChucVu.getSelectedIndex()));
-        qtct.setNhiemVu(txtNhiemVu.getText());
-        try {
-            qtct.setNgayBatDau(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtTuNgay.getText()).getTime()));
-            qtct.setNgayKetThuc(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtDenNgay.getText()).getTime()));
-        } catch (ParseException ex) {
-//            Logger.getLogger(QuaTrinhCongTacFrm.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            qtct.setNgayBatDau(null);
-            qtct.setNgayKetThuc(null);
-        }
+        if (!txtNhiemVu.getText().trim().equals("")) {
+            QuaTrinhCongTac qtct = new QuaTrinhCongTac();
+            qtct.setChucVu(listChucVu.get(cbbChucVu.getSelectedIndex()));
+            qtct.setNhiemVu(txtNhiemVu.getText());
+            try {
+                if (txtTuNgay.getText().trim().equals("")) {
+                    qtct.setNgayBatDau(null);
+                }
+                else {
+                    qtct.setNgayBatDau(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtTuNgay.getText()).getTime()));
+                }
 
-        if (!listQTCongTac.contains(qtct)) {
-            listQTCongTac.add(qtct);
+                if (txtDenNgay.getText().trim().equals("")) {
+                    qtct.setNgayKetThuc(null);
+                }
+                else {
+                    qtct.setNgayKetThuc(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtDenNgay.getText()).getTime()));
+                }
+
+            }
+            catch (ParseException ex) {
+                //            Logger.getLogger(QuaTrinhCongTacFrm.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
+                qtct.setNgayBatDau(null);
+                qtct.setNgayKetThuc(null);
+            }
+
+            if (listQTCongTac == null) {
+                listQTCongTac = new ArrayList<>();
+                listQTCongTac.add(qtct);
+
+                displayTable();
+                clearContent();
+            }
+            else {
+                if (!listQTCongTac.contains(qtct)) {
+                    listQTCongTac.add(qtct);
+
+                    displayTable();
+                    clearContent();
+                }
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "Không được bỏ trống dữ liệu bắt buộc!");
         }
     }//GEN-LAST:event_btnThemActionPerformed
 
@@ -334,7 +401,8 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
                 selectedQTCT.setNhiemVu(txtNhiemVu.getText());
                 selectedQTCT.setNgayBatDau(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtTuNgay.getText()).getTime()));
                 selectedQTCT.setNgayKetThuc(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtDenNgay.getText()).getTime()));
-            } catch (ParseException ex) {
+            }
+            catch (ParseException ex) {
                 Logger.getLogger(QuaTrinhCongTacFrm.class.getName()).log(Level.SEVERE, null, ex);
                 selectedQTCT.setNgayBatDau(null);
                 selectedQTCT.setNgayKetThuc(null);
@@ -374,13 +442,17 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
+        }
+        catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(QuaTrinhCongTacFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
+        }
+        catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(QuaTrinhCongTacFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        }
+        catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(QuaTrinhCongTacFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        }
+        catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(QuaTrinhCongTacFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

@@ -8,6 +8,7 @@ package control;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -36,7 +37,8 @@ public class DAO {
         try {
             Class.forName(dbDriver);
             conn = DriverManager.getConnection(dbURL);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -51,7 +53,8 @@ public class DAO {
             call.executeUpdate();
             check = call.getInt(3);
             return (check == 1);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error!");
             e.printStackTrace();
             return false;
@@ -65,7 +68,8 @@ public class DAO {
             call.setInt(2, hoSo.getPhongBan().getDonVi().getId());
 
             return call.executeUpdate();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
             return 0;
@@ -74,23 +78,26 @@ public class DAO {
 
     public int getMaxIDHoSo() {
         try {
-            CallableStatement call = conn.prepareCall("{call getMaxIDHoSo()}");
+            CallableStatement call = conn.prepareCall("{call getMaxIDHoSo()}", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             int id = 0;
 
             ResultSet rs = call.executeQuery();
+            rs.beforeFirst();
+
             while (rs.next()) {
                 id = rs.getInt(1);
             }
 
             return id;
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
             return 0;
         }
     }
-    
+
     public int addLyLich(LyLich lyLich) {
         try {
             CallableStatement call = conn.prepareCall("{call addLyLich(?,?,?,?,?,?,?,?,?,?)}");
@@ -106,13 +113,14 @@ public class DAO {
             call.setString(10, lyLich.getSdt());
 
             return call.executeUpdate();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
             return 0;
         }
     }
-    
+
     public int addHopDong(HopDong hopDong) {
         try {
             CallableStatement call = conn.prepareCall("{call addHopDong(?,?,?,?,?,?,?,?)}");
@@ -126,16 +134,17 @@ public class DAO {
             call.setString(8, hopDong.getCongViec());
 
             return call.executeUpdate();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
             return 0;
         }
     }
-    
+
     public int addQuaTrinhCongTac(QuaTrinhCongTac qtct) {
         try {
-            CallableStatement call = conn.prepareCall("{call addQuaTrinhCongTac(?,?,?,?,?)}");
+            CallableStatement call = conn.prepareCall("{call addQuaTrinhCongTac(?,?,?,?,?)}", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             call.setInt(1, qtct.getHoso().getId());
             call.setInt(2, qtct.getChucVu().getId());
             call.setString(3, qtct.getNhiemVu());
@@ -143,7 +152,8 @@ public class DAO {
             call.setDate(5, new java.sql.Date(qtct.getNgayKetThuc().getTime()));
 
             return call.executeUpdate();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
             return 0;
@@ -154,25 +164,31 @@ public class DAO {
         ArrayList<ChucVu> list = new ArrayList<>();
 
         try {
-            CallableStatement call = conn.prepareCall("{call dbo.getListChucVu()}");
+            CallableStatement call = conn.prepareCall("{call getListChucVu()}", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             ResultSet rs = call.executeQuery();
+            
+            if (rs.last()) {
+                rs.beforeFirst();
+                
+                while (rs.next()) {
+                    ChucVu cv = new ChucVu();
+                    cv.setId(rs.getInt("id_chuc_vu"));
+                    cv.setTen(rs.getString("ten"));
+                    cv.setGhiChu(rs.getString("ghi_chu"));
 
-            while (rs.next()) {
-                ChucVu cv = new ChucVu();
-                cv.setId(rs.getInt("id_chuc_vu"));
-                cv.setTen("ten");
-                cv.setGhiChu("ghi_chu");
-
-                list.add(cv);
+                    list.add(cv);
+                }
             }
 
-            if (list.size() != 0) {
+            if (!list.isEmpty()) {
                 return list;
-            } else {
+            }
+            else {
                 return null;
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Không lấy được danh sách Chức vụ");
             ex.printStackTrace();
@@ -181,21 +197,27 @@ public class DAO {
     }
 
     public DonVi getDonVi() {
-        DonVi dv = null;
+        ArrayList<DonVi> listDonVi = new ArrayList<>();
 
         try {
-            CallableStatement call = conn.prepareCall("{call dbo.getDonVi()}");
-
+            CallableStatement call = conn.prepareCall("{call getDonVi()}", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = call.executeQuery();
 
             if (rs.last()) {
-                dv = new DonVi();
-                dv.setId(rs.getInt("id_chuc_vu"));
-                dv.setTen("ten");
+                rs.beforeFirst();
+
+                while (rs.next()) {
+                    DonVi dv = new DonVi();
+                    dv.setId(rs.getInt("id_don_vi"));
+                    dv.setTen(rs.getString("ten"));
+
+                    listDonVi.add(dv);
+                }
             }
 
-            return dv;
-        } catch (Exception ex) {
+            return listDonVi.get(0);
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Không lấy được Đơn vị");
             ex.printStackTrace();
@@ -207,25 +229,32 @@ public class DAO {
         ArrayList<PhongBan> list = new ArrayList<>();
 
         try {
-            CallableStatement call = conn.prepareCall("{call dbo.getListPhongBan(?)}");
+            CallableStatement call = conn.prepareCall("{call getListPhongBan(?)}", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             call.setInt(1, donVi.getId());
 
             ResultSet rs = call.executeQuery();
 
-            while (rs.next()) {
-                PhongBan pb = new PhongBan();
-                pb.setId(rs.getInt("id_chuc_vu"));
-                pb.setTen("ten");
+            if (rs.last()) {
+                rs.beforeFirst();
 
-                list.add(pb);
+                while (rs.next()) {
+                    PhongBan pb = new PhongBan();
+                    pb.setId(rs.getInt("id_phong_ban"));
+                    pb.setDonVi(donVi);
+                    pb.setTen(rs.getString("ten"));
+
+                    list.add(pb);
+                }
             }
 
-            if (list.isEmpty()) {
+            if (!list.isEmpty()) {
                 return list;
-            } else {
+            }
+            else {
                 return null;
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Không lấy được danh sách Phòng ban");
             ex.printStackTrace();
@@ -237,24 +266,29 @@ public class DAO {
         ArrayList<LoaiHopDong> list = new ArrayList<>();
 
         try {
-            CallableStatement call = conn.prepareCall("{call dbo.getListLoaiHopDong()}");
+            CallableStatement call = conn.prepareCall("{call getListLoaiHopDong()}", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             ResultSet rs = call.executeQuery();
 
-            while (rs.next()) {
-                LoaiHopDong lhd = new LoaiHopDong();
-                lhd.setId(rs.getInt("id_loai"));
-                lhd.setTen("ten");
+            if (rs.last()) {
+                rs.beforeFirst();
+                while (rs.next()) {
+                    LoaiHopDong lhd = new LoaiHopDong();
+                    lhd.setId(rs.getInt("id_loai"));
+                    lhd.setTen(rs.getString("ten"));
 
-                list.add(lhd);
+                    list.add(lhd);
+                }
             }
 
-            if (list.isEmpty()) {
+            if (!list.isEmpty()) {
                 return list;
-            } else {
+            }
+            else {
                 return null;
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Không lấy được danh sách Loại hợp đồng");
@@ -266,97 +300,45 @@ public class DAO {
         ArrayList<QuaTrinhCongTac> list = new ArrayList<>();
 
         try {
-            CallableStatement call = conn.prepareCall("{call dbo.getListQTCongTac(?)}");
+            CallableStatement call = conn.prepareCall("{call getListQTCongTac(?)}", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             call.setInt(1, hoSo.getId());
 
             ResultSet rs = call.executeQuery();
 
-            while (rs.next()) {
-                QuaTrinhCongTac qtct = new QuaTrinhCongTac();
-                qtct.setId(rs.getInt("id_qtct"));
-                qtct.setHoso(hoSo);
-                qtct.setNhiemVu(rs.getString("nhiem_vu"));
-                qtct.setNgayBatDau(rs.getDate("ngay_bat_dau"));
-                qtct.setNgayKetThuc(rs.getDate("ngay_ket_thuc"));
+            if (rs.last()) {
+                rs.beforeFirst();
 
-                for (ChucVu cv : listChucVu) {
-                    if (cv.getId() == rs.getInt("id_chuc_vu")) {
-                        qtct.setChucVu(cv);
-                        break;
+                while (rs.next()) {
+                    QuaTrinhCongTac qtct = new QuaTrinhCongTac();
+                    qtct.setId(rs.getInt("id_qtct"));
+                    qtct.setHoso(hoSo);
+                    qtct.setNhiemVu(rs.getString("nhiem_vu"));
+                    qtct.setNgayBatDau(rs.getDate("ngay_bat_dau"));
+                    qtct.setNgayKetThuc(rs.getDate("ngay_ket_thuc"));
+
+                    for (ChucVu cv : listChucVu) {
+                        if (cv.getId() == rs.getInt("id_chuc_vu")) {
+                            qtct.setChucVu(cv);
+                            break;
+                        }
                     }
-                }
 
-                list.add(qtct);
+                    list.add(qtct);
+                }
             }
 
             if (list.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Không có quá trình công tác");
-                return list;
-            } else {
                 return null;
             }
-        } catch (Exception ex) {
+            else {
+                return list;
+            }
+        }
+        catch (Exception ex) {
 //            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Không lấy được danh sách Quá trình công tác");
             ex.printStackTrace();
             return null;
         }
     }
-
-//    public LoaiHopDong getLoaiHopDong(int id_loai) {
-//        LoaiHopDong loaiHopDong = null;
-//        
-//        try {
-//            CallableStatement call = conn.prepareCall("{call dbo.getLoaiHopDong(?)}");
-//            call.setInt(1, id_loai);
-//            
-//            ResultSet rs = call.executeQuery();
-//            
-//            if (rs.last()) {
-//                loaiHopDong = new LoaiHopDong(rs.getInt("id_loai"), rs.getString("ten"));
-//            }
-//            
-//            return loaiHopDong;
-//        } catch (Exception ex) {
-////            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
-//            JOptionPane.showMessageDialog(null, "Unable to get LoaiHopDong");
-//            return null;
-//        }
-//    }
-//    public HopDong getHopDong(HoSo hoSo) {
-//        HopDong hopDong = null;
-//        
-//        try {
-//            CallableStatement call = conn.prepareCall("{call dbo.getHopDong(?)}");
-//            call.setInt(1, hoSo.getId());
-//            
-//            ResultSet rs = call.executeQuery();
-//            
-//            if (rs.last()) {
-//                hopDong = new HopDong();
-//                hopDong.setId(rs.getInt("id_hop_dong"));
-//                hopDong.setHoso(hoSo);
-//                hopDong.setNgayBatDau(rs.getDate("ngay_bat_dau"));
-//                hopDong.setNgayHopDong(rs.getDate("ngay_hop_dong"));
-//                hopDong.setHeSoLuong(rs.getFloat("he_so_luong"));
-//                hopDong.setLoaiHopDong(getLoaiHopDong(rs.getInt("id_loai_hop_dong")));
-//                hopDong.setMucLuong(rs.getFloat("muc_luong"));
-//                hopDong.setPhuCap(rs.getFloat("phu_cap"));
-//                hopDong.setBhyt(rs.getFloat("bhyt"));
-//                hopDong.setBhxh(rs.getFloat("bhxh"));
-//                hopDong.setSoBhyt(rs.getString("so_bhyt"));
-//                hopDong.setSoBhxh(rs.getString("so_bhxh"));
-//                hopDong.setHeSoCbvc(rs.getFloat("he_so_cbcv"));
-//                hopDong.setTgGiuBac(rs.getDate("thoi_gian_giu_bac"));
-//                hopDong.setGhiChu(rs.getString("ghi_chu"));
-//                hopDong.setCongViec(rs.getString("cong_viec"));
-//            }
-//            
-//            return hopDong;
-//        } catch (Exception ex) {
-////            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
-//            JOptionPane.showMessageDialog(null, "Unable to get HopDong");
-//            return null;
-//        }
-//    }
 }

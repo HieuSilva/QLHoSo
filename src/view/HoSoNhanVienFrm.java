@@ -11,9 +11,13 @@ import java.awt.event.ItemListener;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import model.ChucVu;
@@ -61,6 +65,7 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
         displayLoaiHopDong();
 
         addComboboxListener();
+        addTextListener();
     }
 
     public HoSo getHoSo() {
@@ -98,24 +103,30 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
     private void displayPhongBan() {
         cbbTenPB.removeAllItems();
 
-        for (PhongBan pb : listPhongBan) {
-            cbbTenPB.addItem(pb.getTen());
+        if (listPhongBan != null) {
+            for (PhongBan pb : listPhongBan) {
+                cbbTenPB.addItem(pb.getTen());
+            }
         }
     }
 
     private void displayChucVu() {
         cbbTenCV.removeAllItems();
 
-        for (ChucVu cv : listChucVu) {
-            cbbTenCV.addItem(cv.getTen());
+        if (listChucVu != null) {
+            for (ChucVu cv : listChucVu) {
+                cbbTenCV.addItem(cv.getTen());
+            }
         }
     }
 
     private void displayLoaiHopDong() {
         cbbLoaiHD.removeAllItems();
 
-        for (LoaiHopDong lhd : listLoaiHopDong) {
-            cbbLoaiHD.addItem(lhd.getTen());
+        if (listLoaiHopDong != null) {
+            for (LoaiHopDong lhd : listLoaiHopDong) {
+                cbbLoaiHD.addItem(lhd.getTen());
+            }
         }
     }
 
@@ -178,13 +189,13 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
             @Override
             public void insertUpdate(DocumentEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                txtLylich_TenNV.setText(e.getDocument().toString());
+                txtLylich_TenNV.setText(txtHoso_TenNV.getText());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                txtLylich_TenNV.setText(e.getDocument().toString());
+                txtLylich_TenNV.setText(txtHoso_TenNV.getText());
             }
 
             @Override
@@ -939,7 +950,8 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
                     try {
                         hopDong.setNgayHopDong((Date) new SimpleDateFormat("yyyy/MM/dd").parse(txtNgayHopDong.getText()));
                         hopDong.setNgayBatDau((Date) new SimpleDateFormat("yyyy/MM/dd").parse(txtNgayBatDau.getText()));
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex) {
 //                        Logger.getLogger(HoSoNhanVienFrm.class.getName()).log(Level.SEVERE, null, ex);
                         hopDong.setNgayHopDong(null);
                         hopDong.setNgayBatDau(null);
@@ -956,24 +968,32 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
                                 JOptionPane.showMessageDialog(null, "Không thêm được Quá trình công tác");
                             }
                         }
-                    } else {
+                    }
+                    else {
                         JOptionPane.showMessageDialog(null, "Không thêm được Hợp đồng");
                     }
-                } else {
+                }
+                else {
                     JOptionPane.showMessageDialog(null, "Không thêm được Lý lịch");
                 }
-            } else {
+            }
+            else {
                 JOptionPane.showMessageDialog(null, "Không thêm được Hồ sơ");
             }
-        } else {
+        }
+        else {
             JOptionPane.showMessageDialog(null, "Không để trống dữ liệu bắt buộc!");
         }
     }//GEN-LAST:event_btnDeXuatThemActionPerformed
 
     private void btnTheoDoiCongTacActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTheoDoiCongTacActionPerformed
         // TODO add your handling code here:
-        btnDeXuatThem.setEnabled(false);
         QuaTrinhCongTacFrm quaTrinhCongTacFrm = new QuaTrinhCongTacFrm(this, hoSo, listChucVu);
+        quaTrinhCongTacFrm.setVisible(true);
+        
+        if(quaTrinhCongTacFrm.isVisible()) {
+            btnDeXuatThem.setEnabled(false);
+        }
     }//GEN-LAST:event_btnTheoDoiCongTacActionPerformed
 
     private void btnQTTangGiamLuongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQTTangGiamLuongActionPerformed
@@ -997,13 +1017,17 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
+        }
+        catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(HoSoNhanVienFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
+        }
+        catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(HoSoNhanVienFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        }
+        catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(HoSoNhanVienFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        }
+        catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(HoSoNhanVienFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
