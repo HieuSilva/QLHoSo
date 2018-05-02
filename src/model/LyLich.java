@@ -61,6 +61,21 @@ public class LyLich {
         this.tpBanThan = tpBanThan;
     }
 
+     public LyLich(int id, String hoTen, String gioiTinh, String danToc, String tonGiao, Date ngaySinh, String nguyenQuan, String quocTich, String noiSinh, String diaChi, String sdt, String cmnd) {
+        this.id = id;
+        this.hoTen = hoTen;
+        this.gioiTinh = gioiTinh;
+        this.danToc = danToc;
+        this.tonGiao = tonGiao;
+        this.ngaySinh = ngaySinh;
+        this.nguyenQuan = nguyenQuan;
+        this.quocTich = quocTich;
+        this.noiSinh = noiSinh;
+        this.diaChi = diaChi;
+        this.sdt = sdt;
+        this.cmnd = cmnd;
+     }
+    
     public LyLich() {
     }
 

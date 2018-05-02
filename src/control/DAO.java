@@ -372,4 +372,27 @@ public class DAO {
             return null;
         }
     }
+    
+    public LyLich[] searchLyLich(String key){
+        LyLich[] listll = null;
+        
+        try {
+            CallableStatement call = conn.prepareCall("{call searchLLByName(?)}",ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            call.setString(1, "%"+key+"%");
+            ResultSet rs = call.executeQuery();
+            if(rs.last()){
+                listll = new LyLich[rs.getRow()];
+                rs.beforeFirst();
+            }
+            int i=0;
+            while(rs.next()){
+                java.util.Date date = new java.util.Date(rs.getDate(6).getTime());
+                listll[i++] = new LyLich(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), date, rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listll;
+    }
 }

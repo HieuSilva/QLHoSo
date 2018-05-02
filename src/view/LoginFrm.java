@@ -40,7 +40,7 @@ public class LoginFrm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         txtPassword = new javax.swing.JPasswordField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Username");
 
@@ -116,7 +116,8 @@ public class LoginFrm extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(controller.checkLogin(txtUsername.getText(), txtPassword.getText())) {
             //JOptionPane.showMessageDialog(null, "Dang nhap thanh cong");
-            new HoSoNhanVienFrm().setVisible(true);
+            new AdminFrm().setVisible(true);
+            this.dispose();
         }
         else {
             JOptionPane.showMessageDialog(null, "Dang nhap khong thanh cong");

@@ -411,7 +411,7 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
         jLabel56 = new javax.swing.JLabel();
         btnDeXuatThem = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Hồ sơ nhân viên");
 
         jLabel1.setText("Mã nhân viên");
