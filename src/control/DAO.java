@@ -8,7 +8,6 @@ package control;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -100,17 +99,19 @@ public class DAO {
 
     public int addLyLich(LyLich lyLich) {
         try {
-            CallableStatement call = conn.prepareCall("{call addLyLich(?,?,?,?,?,?,?,?,?,?)}");
-            call.setString(1, lyLich.getHoTen());
-            call.setString(2, lyLich.getGioiTinh());
-            call.setString(3, lyLich.getDanToc());
-            call.setString(4, lyLich.getTonGiao());
-            call.setDate(5, new java.sql.Date(lyLich.getNgaySinh().getTime()));
-            call.setString(6, lyLich.getNguyenQuan());
-            call.setString(7, lyLich.getQuocTich());
-            call.setString(8, lyLich.getNoiSinh());
-            call.setString(9, lyLich.getDiaChi());
-            call.setString(10, lyLich.getSdt());
+            CallableStatement call = conn.prepareCall("{call addLyLich(?,?,?,?,?,?,?,?,?,?,?,?)}");
+            call.setInt(1, lyLich.getId());
+            call.setString(2, lyLich.getHoTen());
+            call.setString(3, lyLich.getGioiTinh());
+            call.setString(4, lyLich.getDanToc());
+            call.setString(5, lyLich.getTonGiao());
+            call.setDate(6, new java.sql.Date(lyLich.getNgaySinh().getTime()));
+            call.setString(7, lyLich.getNguyenQuan());
+            call.setString(8, lyLich.getQuocTich());
+            call.setString(9, lyLich.getNoiSinh());
+            call.setString(10, lyLich.getCmnd());
+            call.setString(11, lyLich.getDiaChi());
+            call.setString(12, lyLich.getSdt());
 
             return call.executeUpdate();
         }
@@ -125,8 +126,21 @@ public class DAO {
         try {
             CallableStatement call = conn.prepareCall("{call addHopDong(?,?,?,?,?,?,?,?)}");
             call.setInt(1, hopDong.getHoso().getId());
-            call.setDate(2, new java.sql.Date(hopDong.getNgayHopDong().getTime()));
-            call.setDate(3, new java.sql.Date(hopDong.getNgayBatDau().getTime()));
+
+            if (hopDong.getNgayHopDong() == null) {
+                call.setDate(2, null);
+            }
+            else {
+                call.setDate(2, new java.sql.Date(hopDong.getNgayHopDong().getTime()));
+            }
+
+            if (hopDong.getNgayBatDau() == null) {
+                call.setDate(3, null);
+            }
+            else {
+                call.setDate(3, new java.sql.Date(hopDong.getNgayBatDau().getTime()));
+            }
+
             call.setFloat(4, hopDong.getHeSoLuong());
             call.setInt(5, hopDong.getLoaiHopDong().getId());
             call.setFloat(6, hopDong.getMucLuong());
@@ -148,8 +162,21 @@ public class DAO {
             call.setInt(1, qtct.getHoso().getId());
             call.setInt(2, qtct.getChucVu().getId());
             call.setString(3, qtct.getNhiemVu());
-            call.setDate(4, new java.sql.Date(qtct.getNgayBatDau().getTime()));
-            call.setDate(5, new java.sql.Date(qtct.getNgayKetThuc().getTime()));
+            
+            if(qtct.getNgayBatDau()==null) {
+                call.setDate(4, null);
+            }
+            else {
+                call.setDate(4, new java.sql.Date(qtct.getNgayBatDau().getTime()));
+            }
+            
+            if(qtct.getNgayKetThuc()==null) {
+                call.setDate(5, null);
+            }
+            else {
+                call.setDate(5, new java.sql.Date(qtct.getNgayKetThuc().getTime()));
+            }
+            
 
             return call.executeUpdate();
         }
@@ -167,10 +194,10 @@ public class DAO {
             CallableStatement call = conn.prepareCall("{call getListChucVu()}", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             ResultSet rs = call.executeQuery();
-            
+
             if (rs.last()) {
                 rs.beforeFirst();
-                
+
                 while (rs.next()) {
                     ChucVu cv = new ChucVu();
                     cv.setId(rs.getInt("id_chuc_vu"));

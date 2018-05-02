@@ -26,7 +26,7 @@ import model.QuaTrinhCongTac;
  * @author Dell
  */
 public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
-
+    
     private Controller controller;
     private HoSoNhanVienFrm hoSoNhanVienFrm;
     private HoSo hoSo;
@@ -37,99 +37,101 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
     /**
      * Creates new form QuaTrinhCongTacFrm
      */
-    public QuaTrinhCongTacFrm(HoSoNhanVienFrm hoSoNhanVienFrm, HoSo hoSo, ArrayList<ChucVu> listChucVu) {
+    public QuaTrinhCongTacFrm(HoSoNhanVienFrm hoSoNhanVienFrm) {
         initComponents();
-
+        
         controller = new Controller();
-        setHoSo(hoSo);
-        setListChucVu(listChucVu);
         setHoSoNhanVienFrm(hoSoNhanVienFrm);
-        listQTCongTac = controller.getListQTCongTac(hoSo, listChucVu);
-
+        listQTCongTac = hoSoNhanVienFrm.getListQTCT();
+        setListChucVu(hoSoNhanVienFrm.getListChucVu());
+        
         if (listQTCongTac == null) {
             JOptionPane.showMessageDialog(null, "Không có quá trình công tác");
             hoSoNhanVienFrm.getBtnDeXuatThem().setEnabled(true);
         }
-
+        
+        selectedQTCT = null;
+        btnSua.setEnabled(false);
+        
         displayTable();
         setCbbListChucVu();
-
+        
         this.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-
+            
             @Override
             public void windowClosing(WindowEvent e) {
-//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 hoSoNhanVienFrm.getBtnDeXuatThem().setEnabled(true);
                 hoSoNhanVienFrm.setListQTCT(listQTCongTac);
             }
-
+            
+            @Override
+            public void windowClosed(WindowEvent e) {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+            
             @Override
             public void windowIconified(WindowEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-
+            
             @Override
             public void windowDeiconified(WindowEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-
+            
             @Override
             public void windowActivated(WindowEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-
+            
             @Override
             public void windowDeactivated(WindowEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
     }
-
+    
     public HoSo getHoSo() {
         return hoSo;
     }
-
+    
     public void setHoSo(HoSo hoSo) {
         this.hoSo = hoSo;
     }
-
+    
     public HoSoNhanVienFrm getHoSoNhanVienFrm() {
         return hoSoNhanVienFrm;
     }
-
+    
     public void setHoSoNhanVienFrm(HoSoNhanVienFrm hoSoNhanVienFrm) {
         this.hoSoNhanVienFrm = hoSoNhanVienFrm;
     }
-
+    
     public ArrayList<ChucVu> getListChucVu() {
         return listChucVu;
     }
-
+    
     public void setListChucVu(ArrayList<ChucVu> listChucVu) {
         this.listChucVu = listChucVu;
     }
-
+    
     public ArrayList<QuaTrinhCongTac> getListQTCongTac() {
         return listQTCongTac;
     }
-
+    
     public void setListQTCongTac(ArrayList<QuaTrinhCongTac> listQTCongTac) {
         this.listQTCongTac = listQTCongTac;
     }
-
+    
     private void displayTable() {
         DefaultTableModel dm = (DefaultTableModel) tblQTCT.getModel();
         dm.setRowCount(0);
-
+        
         if (listQTCongTac != null) {
             for (QuaTrinhCongTac qtct : listQTCongTac) {
                 Object[] obj = new Object[]{qtct.getChucVu().getTen(), qtct.getNhiemVu(), qtct.getNgayBatDau(), qtct.getNgayKetThuc()};
@@ -137,20 +139,20 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
             }
         }
     }
-
+    
     private void setContent(QuaTrinhCongTac qtct) {
         txtMaQTCT.setText(qtct.getId() + "");
         txtNhiemVu.setText(qtct.getNhiemVu());
-
+        
         cbbChucVu.setSelectedItem(qtct.getChucVu().getTen());
-
+        
         if (txtTuNgay.getText().trim().equals("")) {
             txtTuNgay.setText("");
         }
         else {
             txtTuNgay.setText(qtct.getNgayBatDau().toString());
         }
-
+        
         if (txtDenNgay.getText().trim().equals("")) {
             txtDenNgay.setText("");
         }
@@ -158,7 +160,7 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
             txtDenNgay.setText(qtct.getNgayKetThuc().toString());
         }
     }
-
+    
     private void clearContent() {
         txtMaQTCT.setText("");
         txtNhiemVu.setText("");
@@ -166,10 +168,10 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
         txtTuNgay.setText("");
         txtDenNgay.setText("");
     }
-
+    
     private void setCbbListChucVu() {
         cbbChucVu.removeAllItems();
-
+        
         for (ChucVu cv : listChucVu) {
             cbbChucVu.addItem(cv.getTen());
         }
@@ -204,6 +206,11 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Quá trình công tác");
         setBounds(new java.awt.Rectangle(0, 0, 0, 0));
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
 
         jLabel1.setText("Mã QTCT");
 
@@ -356,14 +363,14 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
                 else {
                     qtct.setNgayBatDau(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtTuNgay.getText()).getTime()));
                 }
-
+                
                 if (txtDenNgay.getText().trim().equals("")) {
                     qtct.setNgayKetThuc(null);
                 }
                 else {
                     qtct.setNgayKetThuc(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtDenNgay.getText()).getTime()));
                 }
-
+                
             }
             catch (ParseException ex) {
                 //            Logger.getLogger(QuaTrinhCongTacFrm.class.getName()).log(Level.SEVERE, null, ex);
@@ -371,18 +378,18 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
                 qtct.setNgayBatDau(null);
                 qtct.setNgayKetThuc(null);
             }
-
+            
             if (listQTCongTac == null) {
                 listQTCongTac = new ArrayList<>();
                 listQTCongTac.add(qtct);
-
+                
                 displayTable();
                 clearContent();
             }
             else {
                 if (!listQTCongTac.contains(qtct)) {
                     listQTCongTac.add(qtct);
-
+                    
                     displayTable();
                     clearContent();
                 }
@@ -399,8 +406,27 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
             try {
                 selectedQTCT.setChucVu(listChucVu.get(cbbChucVu.getSelectedIndex()));
                 selectedQTCT.setNhiemVu(txtNhiemVu.getText());
-                selectedQTCT.setNgayBatDau(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtTuNgay.getText()).getTime()));
-                selectedQTCT.setNgayKetThuc(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtDenNgay.getText()).getTime()));
+                
+                if (txtTuNgay.getText().trim().equals("")) {
+                    selectedQTCT.setNgayBatDau(null);
+                }
+                else {
+                    selectedQTCT.setNgayBatDau(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtTuNgay.getText()).getTime()));
+                }
+                
+                if (txtDenNgay.getText().trim().equals("")) {
+                    selectedQTCT.setNgayKetThuc(null);
+                }
+                else {
+                    selectedQTCT.setNgayKetThuc(new java.sql.Date(new SimpleDateFormat("yyyy/MM/dd").parse(txtDenNgay.getText()).getTime()));
+                }
+                
+                displayTable();
+                clearContent();
+                
+                tblQTCT.clearSelection();
+                selectedQTCT = null;
+                btnSua.setEnabled(false);
             }
             catch (ParseException ex) {
                 Logger.getLogger(QuaTrinhCongTacFrm.class.getName()).log(Level.SEVERE, null, ex);
@@ -414,17 +440,29 @@ public class QuaTrinhCongTacFrm extends javax.swing.JFrame {
         // TODO add your handling code here:
         listQTCongTac.remove(selectedQTCT);
         selectedQTCT = null;
-
+        btnSua.setEnabled(false);
+        
         displayTable();
+        clearContent();
     }//GEN-LAST:event_btnXoaActionPerformed
 
     private void tblQTCTMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblQTCTMouseClicked
         // TODO add your handling code here:
         int row = tblQTCT.getSelectedRow();
         selectedQTCT = listQTCongTac.get(row);
-
+        btnSua.setEnabled(true);
+        
         setContent(selectedQTCT);
     }//GEN-LAST:event_tblQTCTMouseClicked
+
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        // TODO add your handling code here:
+        tblQTCT.clearSelection();
+        selectedQTCT = null;
+        btnSua.setEnabled(false);
+        
+        clearContent();
+    }//GEN-LAST:event_formMouseClicked
 
     /**
      * @param args the command line arguments

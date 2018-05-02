@@ -6,18 +6,16 @@
 package view;
 
 import control.Controller;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.sql.Date;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import model.ChucVu;
@@ -59,6 +57,7 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
         listPhongBan = controller.getListPhongBan(donVi);
         listChucVu = controller.getListChucVu();
         listLoaiHopDong = controller.getListLoaiHopDong();
+        listQTCT = controller.getListQTCongTac(hoSo, listChucVu);
 
         displayPhongBan();
         displayChucVu();
@@ -98,6 +97,14 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
 
     public void setListQTCT(ArrayList<QuaTrinhCongTac> listQTCT) {
         this.listQTCT = listQTCT;
+    }
+
+    public ArrayList<ChucVu> getListChucVu() {
+        return listChucVu;
+    }
+
+    public void setListChucVu(ArrayList<ChucVu> listChucVu) {
+        this.listChucVu = listChucVu;
     }
 
     private void displayPhongBan() {
@@ -189,13 +196,80 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
             @Override
             public void insertUpdate(DocumentEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                txtLylich_TenNV.setText(txtHoso_TenNV.getText());
+                txtHoso_TenNV.addFocusListener(new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+//                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        txtLylich_TenNV.setText(txtHoso_TenNV.getText());
+                    }
+
+                    @Override
+                    public void focusLost(FocusEvent e) {
+//                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        txtLylich_TenNV.setText(txtHoso_TenNV.getText());
+                    }
+                });
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                txtLylich_TenNV.setText(txtHoso_TenNV.getText());
+                txtHoso_TenNV.addFocusListener(new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+//                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        txtLylich_TenNV.setText(txtHoso_TenNV.getText());
+                    }
+
+                    @Override
+                    public void focusLost(FocusEvent e) {
+//                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        txtLylich_TenNV.setText(txtHoso_TenNV.getText());
+                    }
+                });
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+
+        txtLylich_TenNV.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                txtLylich_TenNV.addFocusListener(new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+//                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        txtHoso_TenNV.setText(txtLylich_TenNV.getText());
+                    }
+
+                    @Override
+                    public void focusLost(FocusEvent e) {
+//                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        txtHoso_TenNV.setText(txtLylich_TenNV.getText());
+                    }
+                });
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                txtLylich_TenNV.addFocusListener(new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+//                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        txtHoso_TenNV.setText(txtLylich_TenNV.getText());
+                    }
+
+                    @Override
+                    public void focusLost(FocusEvent e) {
+//                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        txtHoso_TenNV.setText(txtLylich_TenNV.getText());
+                    }
+                });
             }
 
             @Override
@@ -933,11 +1007,32 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
     private void btnDeXuatThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeXuatThemActionPerformed
         // TODO add your handling code here:
         if (requiredTextFilled()) {
+            hoSo.setPhongBan(listPhongBan.get(cbbTenPB.getSelectedIndex()));
+
+            try {
+                lyLich.setNgaySinh((Date) new SimpleDateFormat("yyyy/MM/dd").parse(txtNgaySinh.getText()));
+            }
+            catch (Exception ex) {
+//                Logger.getLogger(HoSoNhanVienFrm.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
+            }
+            lyLich.setHoTen(txtLylich_TenNV.getText());
+            lyLich.setGioiTinh(cbbGioiTinh.getSelectedItem().toString());
+            lyLich.setNoiSinh(txtNoiSinh.getText());
+            lyLich.setNguyenQuan(txtNguyenQuan.getText());
+            lyLich.setQuocTich(txtQuocTich.getText());
+            lyLich.setDanToc(txtDanToc.getText());
+            lyLich.setTonGiao(txtTonGiao.getText());
+            lyLich.setCmnd(txtSoCMND.getText());
+            lyLich.setDiaChi(txtDiaChi.getText());
+            lyLich.setSdt(txtSdt.getText());
+
             if (controller.addHoSo(hoSo) != 0) {
                 int maxId = controller.getMaxIDHoSo();
 
                 if (maxId != 0) {
                     hoSo.setId(maxId);
+                    lyLich.setId(hoSo.getId());
                 }
 
                 if (controller.addLyLich(lyLich) != 0) {
@@ -945,11 +1040,29 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
                     hopDong.setHeSoLuong(Float.parseFloat(txtHeSoLuong.getText()));
                     hopDong.setLoaiHopDong(listLoaiHopDong.get(cbbLoaiHD.getSelectedIndex()));
                     hopDong.setMucLuong(Float.parseFloat(txtMucLuong.getText()));
-                    hopDong.setPhuCap(Float.parseFloat(txtPhuCap.getText()));
+
+                    if (txtPhuCap.getText().trim().equals("")) {
+                        hopDong.setPhuCap(0);
+                    }
+                    else {
+                        hopDong.setPhuCap(Float.parseFloat(txtPhuCap.getText()));
+                    }
+
                     hopDong.setCongViec(txtCongViecDamNhan.getText());
                     try {
-                        hopDong.setNgayHopDong((Date) new SimpleDateFormat("yyyy/MM/dd").parse(txtNgayHopDong.getText()));
-                        hopDong.setNgayBatDau((Date) new SimpleDateFormat("yyyy/MM/dd").parse(txtNgayBatDau.getText()));
+                        if (txtNgayHopDong.getText().trim().equals("")) {
+                            hopDong.setNgayHopDong(null);
+                        }
+                        else {
+                            hopDong.setNgayHopDong((Date) new SimpleDateFormat("yyyy/MM/dd").parse(txtNgayHopDong.getText()));
+                        }
+
+                        if (txtNgayBatDau.getText().trim().equals("")) {
+                            hopDong.setNgayBatDau(null);
+                        }
+                        else {
+                            hopDong.setNgayBatDau((Date) new SimpleDateFormat("yyyy/MM/dd").parse(txtNgayBatDau.getText()));
+                        }
                     }
                     catch (Exception ex) {
 //                        Logger.getLogger(HoSoNhanVienFrm.class.getName()).log(Level.SEVERE, null, ex);
@@ -958,14 +1071,13 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
                         ex.printStackTrace();
                     }
 
-                    for (QuaTrinhCongTac qtct : listQTCT) {
-                        qtct.setHoso(hoSo);
-                    }
-
                     if (controller.addHopDong(hopDong) != 0) {
-                        for (QuaTrinhCongTac qtct : listQTCT) {
-                            if (controller.addQuaTrinhCongTac(qtct) == 0) {
-                                JOptionPane.showMessageDialog(null, "Không thêm được Quá trình công tác");
+                        if (listQTCT != null) {
+                            for (QuaTrinhCongTac qtct : listQTCT) {
+                                qtct.setHoso(hoSo);
+                                if (controller.addQuaTrinhCongTac(qtct) == 0) {
+                                    JOptionPane.showMessageDialog(null, "Không thêm được Quá trình công tác");
+                                }
                             }
                         }
                     }
@@ -988,10 +1100,10 @@ public class HoSoNhanVienFrm extends javax.swing.JFrame {
 
     private void btnTheoDoiCongTacActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTheoDoiCongTacActionPerformed
         // TODO add your handling code here:
-        QuaTrinhCongTacFrm quaTrinhCongTacFrm = new QuaTrinhCongTacFrm(this, hoSo, listChucVu);
+        QuaTrinhCongTacFrm quaTrinhCongTacFrm = new QuaTrinhCongTacFrm(this);
         quaTrinhCongTacFrm.setVisible(true);
-        
-        if(quaTrinhCongTacFrm.isVisible()) {
+
+        if (quaTrinhCongTacFrm.isVisible()) {
             btnDeXuatThem.setEnabled(false);
         }
     }//GEN-LAST:event_btnTheoDoiCongTacActionPerformed
