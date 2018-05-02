@@ -30,7 +30,7 @@ public class DAO {
     private Connection conn;
     private String dbDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 //    private String dbURL = "jdbc:sqlserver://localhost\\EVALUATION_2:1433; databasename=HTTTQL; username=sa; password=12345678";
-    private String dbURL = "jdbc:sqlserver://localhost\\MSSQLSERVER:1433; databasename=HTTTQL; username=sa; password=12345678";
+    private String dbURL = "jdbc:sqlserver://localhost\\MSSQLSERVER:1433; databasename=HTTTQL_KQL; username=sa; password=12345678";
 
     public DAO() {
         try {
@@ -41,6 +41,10 @@ public class DAO {
             e.printStackTrace();
         }
     }
+    
+//    public static void main(String[] args) {
+//        DAO dao = new DAO();
+//    }
 
     public boolean checkLogin(String username, String password) {
         int check = 0;

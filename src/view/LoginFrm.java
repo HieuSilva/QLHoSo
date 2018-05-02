@@ -115,7 +115,8 @@ public class LoginFrm extends javax.swing.JFrame {
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         // TODO add your handling code here:
         if(controller.checkLogin(txtUsername.getText(), txtPassword.getText())) {
-            JOptionPane.showMessageDialog(null, "Dang nhap thanh cong");
+            //JOptionPane.showMessageDialog(null, "Dang nhap thanh cong");
+            new HoSoNhanVienFrm().setVisible(true);
         }
         else {
             JOptionPane.showMessageDialog(null, "Dang nhap khong thanh cong");
